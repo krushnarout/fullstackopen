@@ -12,6 +12,10 @@ This repository is organized into directories corresponding to each part of the 
 
 ```
 part0
+part1
+  courseinfo
+  unicafe
+  anecdotes
 ```
 
 ## Course Structure
