@@ -7,10 +7,16 @@ const App = (props) => {
   const addPerson = (event) => {
     event.preventDefault()
     console.log("button clicked", event.target)
+    if (persons.some((person) => person.name === newName)) {
+      alert(`${newName} is already added to the phonebook`)
+      return
+    }
+    
     const newPerson = {
       id: persons.length + 1,
       name: newName,
     }
+
     setPersons(persons.concat(newPerson))
     setNewName("")
   }
