@@ -25,13 +25,11 @@ const App = () => {
       alert(`${newName} is already added to the phonebook`)
       return
     }
-
     const newPerson = {
       id: persons.length + 1,
       name: newName,
       number: newNumber,
     }
-
     setPersons(persons.concat(newPerson))
     setNewName("")
     setNewNumber("")
@@ -61,12 +59,12 @@ const App = () => {
       <h2>Phonebook</h2>
       <Filter search={search} handleSearchChange={handleSearchChange} />
       <h3>Add a new</h3>
-      <PersonForm 
-      addPerson={addPerson}
-      newName={newName}
-      handleNameChange={handleNameChange}
-      newNumber={newNumber}
-      handleNumberChange={handleNumberChange}  />
+      <PersonForm
+        addPerson={addPerson}
+        newName={newName}
+        handleNameChange={handleNameChange}
+        newNumber={newNumber}
+        handleNumberChange={handleNumberChange} />
 
       <h3>Numbers</h3>
 
