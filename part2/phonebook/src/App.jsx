@@ -11,16 +11,13 @@ const App = () => {
   const [search, setSearch] = useState("")
 
   useEffect(() => {
-    console.log('effect')
     axios.get('http://localhost:3001/persons').then((response) => {
-      console.log('promise fulfilled')
       setPersons(response.data)
     })
   }, [])
 
   const addPerson = (event) => {
     event.preventDefault()
-    console.log("button clicked", event.target)
     if (persons.some((person) => person.name === newName)) {
       alert(`${newName} is already added to the phonebook`)
       return
@@ -40,17 +37,14 @@ const App = () => {
   )
 
   const handleNameChange = (event) => {
-    console.log(event.target.value)
     setNewName(event.target.value)
   }
 
   const handleNumberChange = (event) => {
-    console.log(event.target.value)
     setNewNumber(event.target.value)
   }
 
   const handleSearchChange = (event) => {
-    console.log(event.target.value)
     setSearch(event.target.value)
   }
 
@@ -65,9 +59,7 @@ const App = () => {
         handleNameChange={handleNameChange}
         newNumber={newNumber}
         handleNumberChange={handleNumberChange} />
-
       <h3>Numbers</h3>
-
       <Persons searchPersons={searchPersons} />
     </div>
   )
