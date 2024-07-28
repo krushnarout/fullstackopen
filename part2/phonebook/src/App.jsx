@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react"
 import Filter from "./components/Filter"
 import PersonForm from "./components/PersonForm"
-import PersonService from "./services/PersonService"
 import Persons from "./components/Persons"
+import PersonService from "./services/PersonService"
 
 const App = () => {
   const [persons, setPersons] = useState([])
@@ -33,9 +33,20 @@ const App = () => {
     })
   }
 
-  const searchPersons = persons.filter((person) =>
-    person.name.toLowerCase().includes(search.toLowerCase())
-  )
+  const deletePerson = (id) => {
+    if (window.confirm(`Delete ${persons.find((person) => person.id === id).name} ?`)) {
+      PersonService.remove(id).then(() => {
+        setPersons(persons.filter((person) => person.id !== id))
+      })
+    }
+  }
+
+  const searchPersons = persons.filter((person) => {
+    if (person.name && typeof person.name === 'string') {
+      return person.name.toLowerCase().includes(search.toLowerCase())
+    }
+    return false
+  })
 
   const handleNameChange = (event) => {
     setNewName(event.target.value)
@@ -61,7 +72,7 @@ const App = () => {
         newNumber={newNumber}
         handleNumberChange={handleNumberChange} />
       <h3>Numbers</h3>
-      <Persons searchPersons={searchPersons} />
+      <Persons searchPersons={searchPersons} onDelete={deletePerson} />
     </div>
   )
 }
