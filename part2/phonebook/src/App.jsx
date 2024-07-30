@@ -11,6 +11,7 @@ const App = () => {
   const [newNumber, setNewNumber] = useState("")
   const [search, setSearch] = useState("")
   const [message, setMessage] = useState(null)
+  const [isError, setIsError] = useState(false)
 
   useEffect(() => {
     PersonService.getAll().then(response => {
@@ -30,11 +31,19 @@ const App = () => {
           .then(response => {
             setPersons(persons.map(person => person.id !== existingPerson.id ? person : response))
             setMessage(`Changed ${newName}'s number`)
+            setIsError(false)
             setTimeout(() => {
               setMessage(null)
             }, 5000)
             setNewName("")
             setNewNumber("")
+          }).catch(eror => {
+            setMessage(`Information of ${newName} has already been removed from the server`)
+            setIsError(true)
+            setTimeout(() => {
+              setMessage(null)
+            }, 5000)
+            setPersons(persons.filter(person => person.id !== existingPerson.id))
           })
       }
     } else {
@@ -45,6 +54,7 @@ const App = () => {
       PersonService.create(newPerson).then(response => {
         setPersons(persons.concat(response))
         setMessage(`Added ${newName}`)
+        setIsError(false)
         setTimeout(() => {
           setMessage(null)
         }, 5000)
@@ -84,7 +94,7 @@ const App = () => {
   return (
     <div>
       <h1>Phonebook</h1>
-      <Notification message={message} />
+      <Notification message={message} isError={isError} />
       <Filter search={search} handleSearchChange={handleSearchChange} />
       <h2>Add a new</h2>
       <PersonForm
