@@ -3,12 +3,14 @@ import Filter from "./components/Filter"
 import PersonForm from "./components/PersonForm"
 import Persons from "./components/Persons"
 import PersonService from "./services/PersonService"
+import Notification from "./components/Notification"
 
 const App = () => {
   const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState("")
   const [newNumber, setNewNumber] = useState("")
   const [search, setSearch] = useState("")
+  const [message, setMessage] = useState(null)
 
   useEffect(() => {
     PersonService.getAll().then(response => {
@@ -18,7 +20,7 @@ const App = () => {
 
   const addPerson = (event) => {
     event.preventDefault()
-    
+
     const existingPerson = persons.find(person => person.name === newName)
 
     if (existingPerson) {
@@ -27,6 +29,10 @@ const App = () => {
         PersonService.update(existingPerson.id, updatedPerson)
           .then(response => {
             setPersons(persons.map(person => person.id !== existingPerson.id ? person : response))
+            setMessage(`Changed ${newName}'s number`)
+            setTimeout(() => {
+              setMessage(null)
+            }, 5000)
             setNewName("")
             setNewNumber("")
           })
@@ -38,6 +44,10 @@ const App = () => {
       }
       PersonService.create(newPerson).then(response => {
         setPersons(persons.concat(response))
+        setMessage(`Added ${newName}`)
+        setTimeout(() => {
+          setMessage(null)
+        }, 5000)
         setNewName("")
         setNewNumber("")
       })
@@ -73,16 +83,17 @@ const App = () => {
 
   return (
     <div>
-      <h2>Phonebook</h2>
+      <h1>Phonebook</h1>
+      <Notification message={message} />
       <Filter search={search} handleSearchChange={handleSearchChange} />
-      <h3>Add a new</h3>
+      <h2>Add a new</h2>
       <PersonForm
         addPerson={addPerson}
         newName={newName}
         handleNameChange={handleNameChange}
         newNumber={newNumber}
         handleNumberChange={handleNumberChange} />
-      <h3>Numbers</h3>
+      <h2>Numbers</h2>
       <Persons searchPersons={searchPersons} onDelete={deletePerson} />
     </div>
   )
