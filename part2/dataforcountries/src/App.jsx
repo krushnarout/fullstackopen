@@ -5,6 +5,7 @@ import Country from "./components/Country"
 const App = () => {
   const [countries, setCountries] = useState([])
   const [filter, setFilter] = useState("")
+  const [selectedCountry, setSelectedCountry] = useState(null)
 
   useEffect(() => {
     axios
@@ -16,6 +17,11 @@ const App = () => {
 
   const handleFilterChange = (event) => {
     setFilter(event.target.value)
+    setSelectedCountry(null)
+  }
+
+  const handleShowClick = (country) => {
+    setSelectedCountry(country)
   }
 
   const countriesToShow = countries.filter((country) =>
@@ -30,11 +36,18 @@ const App = () => {
       <div>
         {countriesToShow.length > 10 ? (
           <p>Too many matches, specify another filter</p>
+        ) : selectedCountry ? (
+          <Country country={selectedCountry} />
         ) : countriesToShow.length === 1 ? (
           <Country country={countriesToShow[0]} />
         ) : (
           countriesToShow.map((country, index) => (
-            <p key={index}>{country.name.common}</p>
+            <div key={index}>
+              <p>
+                {country.name.common}
+                <button onClick={() => handleShowClick(country)}>show</button>
+              </p>
+            </div>
           ))
         )}
       </div>
