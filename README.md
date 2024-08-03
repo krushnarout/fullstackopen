@@ -16,6 +16,10 @@ part1
   courseinfo
   unicafe
   anecdotes
+part2
+  courseinfo
+  dataforcountries
+  phonebook
 ```
 
 ## Course Structure
