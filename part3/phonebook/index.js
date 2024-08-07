@@ -4,7 +4,18 @@ const app = express()
 const port = 3001
 
 app.use(express.json())
-app.use(morgan('tiny'))
+
+morgan.token("post", function (req) {
+  if (req.method === "POST") {
+    return JSON.stringify(req.body)
+  } else {
+    return " "
+  }
+})
+
+app.use(
+  morgan(":method :url :status :res[content-length] - :response-time ms :post")
+)
 
 let persons = [
   {
