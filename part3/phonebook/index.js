@@ -35,7 +35,9 @@ app.get('/api/persons', (request, response) => {
 const numberOfPersons = persons.length
 
 app.get('/info', (request, response) => {
-  response.send(`<p>Phonebook has info for ${numberOfPersons} people</p> <p>${new Date()}</p>`)
+  Person.countDocuments({}).then(count => {
+    response.send(`<p>Phonebook has info for ${count} people</p> <p>${new Date()}</p>`)
+  })
 })
 
 app.get('/api/persons/:id', (request, response) => {
