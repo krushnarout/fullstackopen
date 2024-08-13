@@ -50,9 +50,10 @@ app.get('/info', (request, response, next) => {
 })
 
 app.get('/api/persons/:id', (request, response, next) => {
-  Person.findById(request.params.id).then(person => {
-    response.json(person)
-  })
+  Person.findById(request.params.id)
+    .then(person => {
+      response.json(person)
+    })
     .catch(error => next(error))
 })
 
