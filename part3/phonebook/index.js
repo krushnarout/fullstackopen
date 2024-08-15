@@ -20,16 +20,16 @@ const errorHandler = (error, request, response, next) => {
   next(error)
 }
 
-morgan.token("post", function (req) {
-  if (req.method === "POST") {
+morgan.token('post', function (req) {
+  if (req.method === 'POST') {
     return JSON.stringify(req.body)
   } else {
-    return " "
+    return ' '
   }
 })
 
 app.use(
-  morgan(":method :url :status :res[content-length] - :response-time ms :post")
+  morgan(':method :url :status :res[content-length] - :response-time ms :post')
 )
 
 app.use(cors())
@@ -85,7 +85,7 @@ app.post('/api/persons', (request, response, next) => {
 
 app.delete('/api/persons/:id', (request, response, next) => {
   Person.findByIdAndDelete(request.params.id)
-    .then(result => {
+    .then(() => {
       response.status(204).end()
     })
 
