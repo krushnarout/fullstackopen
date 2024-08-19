@@ -20,6 +20,8 @@ part2
   courseinfo
   dataforcountries
   phonebook
+part3
+  phonebook
 ```
 
 ## Course Structure
