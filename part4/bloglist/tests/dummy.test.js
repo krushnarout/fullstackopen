@@ -108,3 +108,12 @@ describe('favorite blog', () => {
     })
   })
 })
+
+describe('most blogs', () => {
+  test("of a bigger list of blogs, it returns the author with the most blogs", () => {
+    assert.deepStrictEqual(listHelper.mostBlogs(blogs), {
+      author: "Robert C. Martin",
+      blogs: 3
+    })
+  })
+})
