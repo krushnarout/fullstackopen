@@ -30,7 +30,7 @@ beforeEach(async () => {
   await Blog.deleteMany({})
 
   let blogObject = new Blog(initialBlogs[0])
-    await blogObject.save()
+  await blogObject.save()
 
   blogObject = new Blog(initialBlogs[1])
   await blogObject.save()
@@ -41,6 +41,11 @@ test('blogs are returned as json', async () => {
     .get('/api/blogs')
     .expect(200)
     .expect('Content-Type', /application\/json/)
+})
+
+test('there are two blogs', async () => {
+  const response = await api.get('/api/blogs')
+  assert.strictEqual(response.body.length, 2)
 })
 
 after(async () => {
