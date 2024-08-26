@@ -108,6 +108,24 @@ describe('when there is initially some blogs saved', () => {
   })
 })
 
+describe('updating the information of an individual blog post', () => {
+  test('succeeds with status code 200 if likes updated', async () => {
+    const blogsAtStart = await helper.blogsInDb()
+    const blogToUpdate = blogsAtStart[0]
+
+    const updatedBlog = { ...blogToUpdate, likes: 100 }
+
+    await api
+      .put(`/api/blogs/${blogToUpdate.id}`)
+      .send(updatedBlog)
+      .expect(200)
+
+    const blogsAtEnd = await helper.blogsInDb()
+    const likes = blogsAtEnd.map(b => b.likes)
+    assert(likes.includes(100))
+  })
+})
+
 after(async () => {
   await mongoose.connection.close()
 })
