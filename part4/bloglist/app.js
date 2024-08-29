@@ -5,8 +5,9 @@ const cors = require('cors')
 const middleware = require('./utils/middleware')
 const logger = require('./utils/logger')
 const mongoose = require('mongoose')
-const blogsRouter = require('./controllers/blogs')
 const morgan = require('morgan')
+const blogsRouter = require('./controllers/blogs')
+const usersRouter = require('./controllers/users')
 
 mongoose.set('strictQuery', false)
 
@@ -34,6 +35,7 @@ morgan.token('post', function (req) {
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :post'))
 
 app.use('/api/blogs', blogsRouter)
+app.use('/api/users', usersRouter)
 
 app.use(middleware.errorHandler)
 
