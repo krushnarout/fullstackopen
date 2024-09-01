@@ -1,7 +1,5 @@
-const jwt = require('jsonwebtoken')
 const blogsRouter = require('express').Router()
 const Blog = require('../models/blog')
-const User = require('../models/user')
 
 blogsRouter.get('/', async (request, response) => {
   const blogs = await Blog
@@ -20,11 +18,7 @@ blogsRouter.get("/:id", async (request, response) => {
 
 blogsRouter.post('/', async (request, response, next) => {
   const body = request.body
-  const decodedToken = jwt.verify(request.token, process.env.SECRET)
-  if (!decodedToken.id) {
-    return response.status(401).json({ error: 'token invalid' })
-  }
-  const user = await User.findById(decodedToken.id)
+  const user = request.user
 
   if (!body.title || !body.url) {
     return response.status(400).json({ error: 'title or url is missing' })
@@ -38,33 +32,36 @@ blogsRouter.post('/', async (request, response, next) => {
     user: user.id,
   })
 
-  try {
-    const savedBlog = await blog.save()
-    user.blogs = user.blogs.concat(savedBlog._id)
-    await user.save()
+  const savedBlog = await blog.save()
+  user.blogs = user.blogs.concat(savedBlog._id)
+  await user.save()
 
-    response.status(201).json(savedBlog)
-  } catch (exception) {
-    next(exception)
-  }
+  response.status(201).json(savedBlog)
 })
 
 blogsRouter.delete('/:id', async (request, response, next) => {
-  const decodedToken = jwt.verify(request.token, process.env.SECRET)
-
-  if (!token || !decodedToken.id) {
-    return response.status(401).json({error: "token missing or invalid"})
-  }
-
   const id = request.params.id
+  const user = request.user
   const blog = await Blog.findById(id)
-  if (blog && blog.user.toString() === decodedToken.id) {
-    await Blog.findByIdAndRemove(id)
-    response.status(204).end()
+
+  if (!blog) {
+    return response
+      .status(400)
+      .json({ error: `Blog by ID ${id} does not exist` })
   }
-  return response.status(401).json({
-    error: "Unauthorized to access the blog",
-  })
+
+  if (blog.user.toString() === user._id.toString()) {
+    await Blog.findByIdAndDelete(id)
+    user.blogs = user.blogs.filter(
+      blogID => blogID.toString() !== blog._id.toString()
+    )
+    await user.save()
+    response.status(204).end()
+  } else {
+    return response
+      .status(401)
+      .json({ error: "Unauthorized access to the blog" })
+  }
 })
 
 blogsRouter.put('/:id', async (request, response, next) => {
