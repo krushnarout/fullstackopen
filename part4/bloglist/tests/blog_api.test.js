@@ -5,18 +5,30 @@ const supertest = require('supertest')
 const app = require('../app')
 const api = supertest(app)
 const bcryptjs = require('bcryptjs')
+const jwt = require('jsonwebtoken')
 
 const helper = require('./test_helper')
-
 const User = require('../models/user')
 const Blog = require('../models/blog')
+
+
+const getToken = async () => {
+  const user = await User.findOne({ username: 'krushna' })
+  const userForToken = { username: user.username, id: user._id }
+  return jwt.sign(userForToken, process.env.SECRET, { expiresIn: '1h' })
+}
 
 describe('when there is initially some blogs saved', () => {
   beforeEach(async () => {
     await Blog.deleteMany({})
+    await User.deleteMany({})
+
+    const passwordHash = await bcryptjs.hash('sekret', 10)
+    const user = new User({ username: 'krushna', passwordHash })
+    await user.save()
 
     for (let blog of helper.initialBlogs) {
-      let blogObject = new Blog(blog)
+      let blogObject = new Blog({ ...blog, user: user._id })
       await blogObject.save()
     }
   })
@@ -33,25 +45,28 @@ describe('when there is initially some blogs saved', () => {
     assert.strictEqual(response.body.length, helper.initialBlogs.length)
   })
 
-  test('unique identifier property of blog posts is named id'), async () => {
+  test('unique identifier property of blog posts is named id', async () => {
     const response = await api.get('/api/blogs')
     const blog = response.body[0]
 
-    assert.strictEqual(blog.id, initialBlogs[0]._id)
+    assert.strictEqual(blog.id, helper.initialBlogs[0]._id.toString())
     assert.strictEqual(blog._id, undefined)
-  }
+  })
 
   describe('addition of a new blog', () => {
     test('a valid blog can be added', async () => {
       const newBlog = {
-        title: "Canonical string reduction",
-        author: "Edsger W. Dijkstra",
-        url: "http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html",
+        title: 'Canonical string reduction',
+        author: 'Edsger W. Dijkstra',
+        url: 'http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html',
         likes: 12,
       }
 
+      const token = await getToken()
+
       await api
         .post('/api/blogs')
+        .set('Authorization', `Bearer ${token}`)
         .send(newBlog)
         .expect(201)
         .expect('Content-Type', /application\/json/)
@@ -63,30 +78,47 @@ describe('when there is initially some blogs saved', () => {
       assert(titles.includes('Canonical string reduction'))
     })
 
-    test('verify if likes property is missing then it defaults to 0', async () => {
+    test('fails with status code 401 Unauthorized if token is not provided', async () => {
       const newBlog = {
-        title: "First class tests",
-        author: "Robert C. Martin",
-        url: "http://blog.cleancoder.com/uncle-bob/2017/05/05/TestDefinitions.htmll",
+        title: 'Another blog',
+        author: 'John Doe',
+        url: 'http://example.com',
+        likes: 5,
       }
 
+      await api.post('/api/blogs').send(newBlog).expect(401)
+    })
+
+    test('verify if likes property is missing then it defaults to 0', async () => {
+      const newBlog = {
+        title: 'First class tests',
+        author: 'Robert C. Martin',
+        url: 'http://blog.cleancoder.com/uncle-bob/2017/05/05/TestDefinitions.html',
+      }
+
+      const token = await getToken()
+
       const response = await api
-        .post("/api/blogs")
+        .post('/api/blogs')
+        .set('Authorization', `Bearer ${token}`)
         .send(newBlog)
         .expect(201)
-        .expect("Content-Type", /application\/json/)
+        .expect('Content-Type', /application\/json/)
 
       assert.strictEqual(response.body.likes, 0)
     })
 
     test('if title and url properties are missing then return 400', async () => {
       const newBlog = {
-        author: "Robert C. Martin",
-        likes: 10
+        author: 'Robert C. Martin',
+        likes: 10,
       }
+
+      const token = await getToken()
 
       await api
         .post('/api/blogs')
+        .set('Authorization', `Bearer ${token}`)
         .send(newBlog)
         .expect(400)
     })
@@ -97,8 +129,11 @@ describe('when there is initially some blogs saved', () => {
       const blogsAtStart = await helper.blogsInDb()
       const blogToDelete = blogsAtStart[0]
 
+      const token = await getToken()
+
       await api
         .delete(`/api/blogs/${blogToDelete.id}`)
+        .set('Authorization', `Bearer ${token}`)
         .expect(204)
 
       const blogsAtEnd = await helper.blogsInDb()
@@ -117,8 +152,11 @@ describe('updating the information of an individual blog post', () => {
 
     const updatedBlog = { ...blogToUpdate, likes: 100 }
 
+    const token = await getToken()
+
     await api
       .put(`/api/blogs/${blogToUpdate.id}`)
+      .set('Authorization', `Bearer ${token}`)
       .send(updatedBlog)
       .expect(200)
 
@@ -160,7 +198,7 @@ describe('when there is initially one user at db', () => {
     assert(usernames.includes(newUser.username))
   })
 
-  test('creation fails with proper statuscode and message if username already taken', async () => {
+  test('creation fails with proper status code and message if username already taken', async () => {
     const usersAtStart = await helper.usersInDb()
 
     const newUser = {
