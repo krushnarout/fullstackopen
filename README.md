@@ -22,6 +22,8 @@ part2
   phonebook
 part3
   phonebook
+part4
+  bloglist
 ```
 
 ## Course Structure
