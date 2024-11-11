@@ -12,9 +12,6 @@ const App = () => {
   const [user, setUser] = useState(null)
   const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
-  const [newTitle, setNewTitle] = useState("")
-  const [newAuthor, setNewAuthor] = useState("")
-  const [newUrl, setNewUrl] = useState("")
   const [notification, setNotification] = useState({ message: "", type: "" })
 
   const showNotification = (message, type = "success") => {
@@ -43,22 +40,13 @@ const App = () => {
     showNotification("Logged out successfully", "success")
   }
 
-  const handleCreateBlog = async event => {
-    event.preventDefault()
+  const createBlog = async blog => {
     try {
-      const newBlog = {
-        title: newTitle,
-        author: newAuthor,
-        url: newUrl
-      }
-      const savedBlog = await blogService.create(newBlog)
-      setBlogs(blogs.concat(savedBlog))
-      setNewTitle("")
-      setNewAuthor("")
-      setNewUrl("")
-      showNotification(`a new blog ${newTitle} by ${newAuthor} added`, "success")
+      const createdBlog = await blogService.create(blog)
+      setBlogs(blogs.concat(createdBlog))
+      showNotification(`A new blog ${createdBlog.title} by ${createdBlog.author} added`, "success")
     } catch (exception) {
-      showNotification("Error adding blog", "error")
+      showNotification("Failed to create new blog", "error")
     }
   }
 
@@ -114,13 +102,7 @@ const App = () => {
       </div>
       <Togglable buttonLabel="Create new blog">
         <BlogForm
-          handleSubmit={handleCreateBlog}
-          handleTitleChange={({ target }) => setNewTitle(target.value)}
-          handleAuthorChange={({ target }) => setNewAuthor(target.value)}
-          handleUrlChange={({ target }) => setNewUrl(target.value)}
-          title={newTitle}
-          author={newAuthor}
-          url={newUrl}
+          createBlog={createBlog}
         />
       </Togglable>
       {blogs.map(blog => (
