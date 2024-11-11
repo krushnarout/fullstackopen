@@ -10,7 +10,7 @@ The course is divided into several parts, covering topics such as React, Redux, 
 
 This repository is organized into directories corresponding to each part of the course. Within each directory, you'll find subdirectories for individual exercises, along with any necessary files, such as READMEs or additional resources.
 
-```
+```text
 part0
 part1
   courseinfo
@@ -24,6 +24,8 @@ part3
   phonebook
 part4
   bloglist
+part5
+  bloglist-frontend
 ```
 
 ## Course Structure
