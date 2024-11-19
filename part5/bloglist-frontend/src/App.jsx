@@ -47,7 +47,15 @@ const App = () => {
   const createBlog = async blog => {
     try {
       const createdBlog = await blogService.create(blog)
-      setBlogs(blogs.concat(createdBlog))
+      const blogWithUser = {
+        ...createdBlog,
+        user: {
+          username: user.username,
+          name: user.name,
+          id: user.id
+        }
+      }
+      setBlogs(blogs.concat(blogWithUser))
       showNotification(`A new blog ${createdBlog.title} by ${createdBlog.author} added`, "success")
     } catch (exception) {
       showNotification("Failed to create new blog", "error")
