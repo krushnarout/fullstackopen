@@ -62,6 +62,18 @@ const App = () => {
     }
   }
 
+  const deleteBlog = async (blogToDelete) => {
+    try {
+      if (window.confirm(`Remove blog ${blogToDelete.title} by ${blogToDelete.author}?`)) {
+        await blogService.remove(blogToDelete.id)
+        setBlogs(blogs.filter(blog => blog.id !== blogToDelete.id))
+        showNotification(`Blog '${blogToDelete.title}' was successfully deleted`, 'success')
+      }
+    } catch (exception) {
+      showNotification('Failed to delete blog', 'error')
+    }
+  }
+
   useEffect(() => {
     blogService.getAll().then(blogs => setBlogs(blogs))
   }, [])
@@ -120,7 +132,13 @@ const App = () => {
       {blogs
         .sort((a, b) => b.likes - a.likes)
         .map(blog => (
-          <Blog key={blog.id} blog={blog} updateBlog={updateBlog} />
+          <Blog 
+            key={blog.id} 
+            blog={blog} 
+            updateBlog={updateBlog}
+            deleteBlog={deleteBlog}
+            currentUser={user}
+          />
       ))}
     </div>
   )
