@@ -24,7 +24,7 @@ const Blog = ({ blog, updateBlog, deleteBlog, currentUser }) => {
       title: blog.title,
       url: blog.url
     }
-    
+
     try {
       const returnedBlog = await blogsService.update(blog.id, updatedBlog)
       updateBlog(returnedBlog)
@@ -36,7 +36,7 @@ const Blog = ({ blog, updateBlog, deleteBlog, currentUser }) => {
   return (
     <div style={blogStyle}>
       <div>
-        {blog.title} {blog.author} 
+        {blog.title} {blog.author}
         <button onClick={toggleDetails}>
           {showDetails ? 'Hide' : 'View'}
         </button>
@@ -49,9 +49,9 @@ const Blog = ({ blog, updateBlog, deleteBlog, currentUser }) => {
             <button onClick={handleLike}>like</button>
           </p>
           <p>{blog.user.username}</p>
-            <button onClick={() => deleteBlog(blog)}>
+          <button onClick={() => deleteBlog(blog)}>
               remove
-            </button>
+          </button>
         </div>
       )}
     </div>

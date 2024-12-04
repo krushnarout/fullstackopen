@@ -1,22 +1,22 @@
-import { useState, useEffect } from "react"
-import Blog from "./components/Blog"
-import Notification from "./components/Notification"
-import BlogForm from "./components/BlogForm"
-import Togglable from "./components/Togglable"
-import blogService from "./services/blogs"
-import loginService from "./services/login"
-import "./index.css"
+import { useState, useEffect } from 'react'
+import Blog from './components/Blog'
+import Notification from './components/Notification'
+import BlogForm from './components/BlogForm'
+import Togglable from './components/Togglable'
+import blogService from './services/blogs'
+import loginService from './services/login'
+import './index.css'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [user, setUser] = useState(null)
-  const [username, setUsername] = useState("")
-  const [password, setPassword] = useState("")
-  const [notification, setNotification] = useState({ message: "", type: "" })
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
+  const [notification, setNotification] = useState({ message: '', type: '' })
 
-  const showNotification = (message, type = "success") => {
+  const showNotification = (message, type = 'success') => {
     setNotification({ message, type })
-    setTimeout(() => setNotification({ message: "", type: "" }), 5000)
+    setTimeout(() => setNotification({ message: '', type: '' }), 5000)
   }
 
   const handleLogin = async event => {
@@ -24,25 +24,25 @@ const App = () => {
     try {
       const user = await loginService.login({ username, password })
       setUser(user)
-      window.localStorage.setItem("loggedUser", JSON.stringify(user))
-      setUsername("")
-      setPassword("")
+      window.localStorage.setItem('loggedUser', JSON.stringify(user))
+      setUsername('')
+      setPassword('')
       blogService.setToken(user.token)
-      showNotification("User logged in successfully", "success")
+      showNotification('User logged in successfully', 'success')
     } catch (exception) {
-      showNotification("Wrong username or password", "error")
+      showNotification('Wrong username or password', 'error')
     }
   }
 
   const handleLogout = () => {
-    window.localStorage.removeItem("loggedUser")
+    window.localStorage.removeItem('loggedUser')
     setUser(null)
-    showNotification("Logged out successfully", "success")
+    showNotification('Logged out successfully', 'success')
   }
 
   const updateBlog = (updatedBlog) => {
     setBlogs(blogs.map(blog => blog.id === updatedBlog.id ? updatedBlog : blog))
-  }  
+  }
 
   const createBlog = async blog => {
     try {
@@ -56,9 +56,9 @@ const App = () => {
         }
       }
       setBlogs(blogs.concat(blogWithUser))
-      showNotification(`A new blog ${createdBlog.title} by ${createdBlog.author} added`, "success")
+      showNotification(`A new blog ${createdBlog.title} by ${createdBlog.author} added`, 'success')
     } catch (exception) {
-      showNotification("Failed to create new blog", "error")
+      showNotification('Failed to create new blog', 'error')
     }
   }
 
@@ -79,7 +79,7 @@ const App = () => {
   }, [])
 
   useEffect(() => {
-    const loggedUser = JSON.parse(window.localStorage.getItem("loggedUser"))
+    const loggedUser = JSON.parse(window.localStorage.getItem('loggedUser'))
     if (loggedUser) {
       setUser(loggedUser)
       blogService.setToken(loggedUser.token)
@@ -93,7 +93,7 @@ const App = () => {
         <Notification message={notification.message} type={notification.type} />
         <form onSubmit={handleLogin}>
           <div>
-            username{" "}
+            username{' '}
             <input
               type="text"
               name="Username"
@@ -102,7 +102,7 @@ const App = () => {
             />
           </div>
           <div>
-            password{" "}
+            password{' '}
             <input
               type="password"
               name="Password"
@@ -132,14 +132,14 @@ const App = () => {
       {blogs
         .sort((a, b) => b.likes - a.likes)
         .map(blog => (
-          <Blog 
-            key={blog.id} 
-            blog={blog} 
+          <Blog
+            key={blog.id}
+            blog={blog}
             updateBlog={updateBlog}
             deleteBlog={deleteBlog}
             currentUser={user}
           />
-      ))}
+        ))}
     </div>
   )
 }
