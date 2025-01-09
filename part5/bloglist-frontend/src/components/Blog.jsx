@@ -16,21 +16,13 @@ const Blog = ({ blog, updateBlog, deleteBlog, currentUser }) => {
     setShowDetails(!showDetails)
   }
 
-  const handleLike = async () => {
+  const handleLike = () => {
     const updatedBlog = {
-      user: blog.user.id,
+      ...blog,
       likes: blog.likes + 1,
-      author: blog.author,
-      title: blog.title,
-      url: blog.url
+      user: blog.user.id
     }
-
-    try {
-      const returnedBlog = await blogsService.update(blog.id, updatedBlog)
-      updateBlog(returnedBlog)
-    } catch (error) {
-      console.error('Error updating likes:', error)
-    }
+    updateBlog(updatedBlog)
   }
 
   return (
