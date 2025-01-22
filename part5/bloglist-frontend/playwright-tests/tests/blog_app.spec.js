@@ -34,4 +34,26 @@ describe('Blog app', () => {
       await expect(errorDiv).toHaveCSS('color', 'rgb(255, 0, 0)')
     })
   })
+
+  describe('When logged in', () => {
+    beforeEach(async ({ page }) => {
+      await loginWith(page, 'krushnarout', 'password')
+    })
+
+    test('a new blog can be created', async ({ page }) => {
+      const newBlogButton = page.getByText('New Blog')
+      await newBlogButton.click()
+
+      await page.fill('input[name="title"]', 'My First Blog')
+      await page.fill('input[name="author"]', 'Krushna Kanta Rout')
+      await page.fill('input[name="url"]', 'https://myblog.com')
+
+      const createButton = page.getByText('Create')
+      await createButton.click()
+
+      const blogList = page.locator('.blog-list')
+      await expect(blogList).toContainText('My First Blog')
+      await expect(blogList).toContainText('Krushna Kanta Rout')
+    })
+  })
 })
