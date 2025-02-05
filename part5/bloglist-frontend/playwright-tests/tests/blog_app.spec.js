@@ -1,5 +1,5 @@
 const { test, expect, describe, beforeEach } = require('@playwright/test')
-const { loginWith } = require('./helper')
+const { loginWith, createBlog } = require('./helper')
 
 describe('Blog app', () => {
   beforeEach(async ({ page, request }) => {
@@ -36,24 +36,33 @@ describe('Blog app', () => {
   })
 
   describe('When logged in', () => {
-    beforeEach(async ({ page }) => {
+    beforeEach(async ({ page, request }) => {
       await loginWith(page, 'krushnarout', 'password')
+      await createBlog(page, {
+        title: 'My First Blog',
+        author: 'Krushna Kanta Rout',
+        url: 'https://myblog.com'
+      })
     })
 
     test('a new blog can be created', async ({ page }) => {
-      const newBlogButton = page.getByText('New Blog')
-      await newBlogButton.click()
+      const blogTitle = page.locator('.blog').filter({
+        hasText: 'My First Blog Krushna Kanta Rout'
+      })
+      await expect(blogTitle).toBeVisible()
+    })
 
-      await page.fill('input[name="title"]', 'My First Blog')
-      await page.fill('input[name="author"]', 'Krushna Kanta Rout')
-      await page.fill('input[name="url"]', 'https://myblog.com')
+    test('a blog can be liked', async ({ page }) => {
+      const blog = page.locator('.blog').filter({
+        hasText: 'My First Blog Krushna Kanta Rout'
+      })
+      await blog.getByRole('button', { name: 'View' }).click()
+      const likeButton = blog.getByTestId('like-button')
+      const likes = blog.getByTestId('likes')
 
-      const createButton = page.getByText('Create')
-      await createButton.click()
-
-      const blogList = page.locator('.blog-list')
-      await expect(blogList).toContainText('My First Blog')
-      await expect(blogList).toContainText('Krushna Kanta Rout')
+      const initialLikes = Number(await likes.innerText())
+      await likeButton.click()
+      await expect(likes).toHaveText(String(initialLikes + 1))
     })
   })
 })

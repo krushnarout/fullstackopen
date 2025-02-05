@@ -16,17 +16,18 @@ const Blog = ({ blog, updateBlog, deleteBlog, currentUser }) => {
     setShowDetails(!showDetails)
   }
 
-  const handleLike = () => {
+  const handleLike = async () => {
     const updatedBlog = {
       ...blog,
       likes: blog.likes + 1,
       user: blog.user.id
     }
-    updateBlog(updatedBlog)
+    const returnedBlog = await blogsService.update(blog.id, updatedBlog)
+    updateBlog(returnedBlog)
   }
 
   return (
-    <div style={blogStyle} className='blog'>
+    <div style={blogStyle} className='blog' data-testid='blog'>
       <div>
         {blog.title} {blog.author}
         <button onClick={toggleDetails}>
@@ -37,10 +38,10 @@ const Blog = ({ blog, updateBlog, deleteBlog, currentUser }) => {
         <div>
           <p>{blog.url}</p>
           <p>
-            likes: {blog.likes}
-            <button onClick={handleLike}>like</button>
+            likes: <span data-testid="likes">{blog.likes}</span>
+            <button data-testid="like-button" onClick={handleLike}>like</button>
           </p>
-          <p>{blog.user.username}</p>
+          {blog.user && <p>{blog.user.username}</p>}
           <button onClick={() => deleteBlog(blog)}>
               remove
           </button>
