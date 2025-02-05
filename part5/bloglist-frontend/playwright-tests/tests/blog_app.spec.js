@@ -56,13 +56,24 @@ describe('Blog app', () => {
       const blog = page.locator('.blog').filter({
         hasText: 'My First Blog Krushna Kanta Rout'
       })
+
       await blog.getByRole('button', { name: 'View' }).click()
       const likeButton = blog.getByTestId('like-button')
       const likes = blog.getByTestId('likes')
-
       const initialLikes = Number(await likes.innerText())
       await likeButton.click()
       await expect(likes).toHaveText(String(initialLikes + 1))
+    })
+
+    test('the user who created a blog can delete it', async ({ page }) => {
+      const blog = page.locator('.blog').filter({
+        hasText: 'My First Blog Krushna Kanta Rout'
+      })
+
+      await blog.getByRole('button', { name: 'View' }).click()
+      page.on('dialog', dialog => dialog.accept())
+      await blog.getByRole('button', { name: 'Remove' }).click()
+      await expect(blog).not.toBeVisible()
     })
   })
 })
