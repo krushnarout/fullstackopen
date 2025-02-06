@@ -42,9 +42,11 @@ const Blog = ({ blog, updateBlog, deleteBlog, currentUser }) => {
             <button data-testid="like-button" onClick={handleLike}>like</button>
           </p>
           {blog.user && <p>{blog.user.username}</p>}
-          <button onClick={() => deleteBlog(blog)}>
-              remove
-          </button>
+          {blog.user?.username === currentUser?.username && (
+            <button data-testid="remove-button" onClick={() => deleteBlog(blog)}>
+              Remove
+            </button>
+          )}
         </div>
       )}
     </div>
