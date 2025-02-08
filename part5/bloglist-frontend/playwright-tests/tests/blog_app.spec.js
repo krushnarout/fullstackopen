@@ -99,5 +99,41 @@ describe('Blog app', () => {
       await expect(deleteButton).not.toBeVisible()
     })
 
+    test('blogs are arranged in the order of most likes first', async ({ page }) => {
+      await page.getByRole('button', { name: 'cancel' }).click()
+      await createBlog(page, {
+        title: '2 Likes Blog',
+        author: 'krushnarout',
+        url: 'https://github.com/krushnarout/fullstackopen'
+      })
+
+      await page.getByRole('button', { name: 'cancel' }).click()
+      await createBlog(page, {
+        title: '5 Likes Blog',
+        author: 'krushnarout',
+        url: 'https://github.com/krushnarout/fullstackopen'
+      })
+
+      const likeBlog = async (blogTitle, times) => {
+        const blog = page.locator('.blog').filter({ hasText: blogTitle })
+        await blog.getByRole('button', { name: 'View' }).click()
+        const likeButton = blog.getByTestId('like-button')
+
+        for (let i = 0; i < times; i++) {
+          await likeButton.click()
+          await page.waitForTimeout(200)
+        }
+      }
+
+      await likeBlog('5 Likes Blog', 5)
+      await likeBlog('2 Likes Blog', 2)
+
+      const blogTitles = await page.locator('.blog').allTextContents()
+
+      expect(blogTitles).toHaveLength(3)
+      expect(blogTitles[0]).toContain('5 Likes Blog')
+      expect(blogTitles[1]).toContain('2 Likes Blog')
+      expect(blogTitles[2]).toContain('My First Blog')
+    })
   })
 })
