@@ -5,7 +5,7 @@ const AnecdoteList = () => {
   const dispatch = useDispatch()
 
   const anecdotes = useSelector(({ anecdotes, filter }) => {
-    return anecdotes
+    return [...anecdotes]
       .filter(a => a.content.toLowerCase().includes(filter.toLowerCase()))
       .sort((a, b) => b.votes - a.votes)
   })
