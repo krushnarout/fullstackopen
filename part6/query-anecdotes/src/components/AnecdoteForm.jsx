@@ -17,7 +17,11 @@ const AnecdoteForm = () => {
       }, 5000)
     },
     onError: (error) => {
-      notificationDispatch({ type: 'SET', payload: error.response.data.error })
+      const errorMessage = error.response?.data?.error || 'Error creating anecdote'
+      notificationDispatch({
+        type: 'SET',
+        payload: errorMessage
+      })
       setTimeout(() => {
         notificationDispatch({ type: 'CLEAR' })
       }, 5000)
@@ -28,12 +32,6 @@ const AnecdoteForm = () => {
     event.preventDefault()
     const content = event.target.anecdote.value
     event.target.anecdote.value = ''
-
-    if (content.length < 5) {
-      alert('Anecdote must be at least 5 characters long')
-      return
-    }
-
     newAnecdoteMutation.mutate(content)
   }
 
