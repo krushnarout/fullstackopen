@@ -26,6 +26,10 @@ part4
   bloglist
 part5
   bloglist-frontend
+part6
+  query-anecdotes
+  redux-anecdotes
+  unicafe-redux
 ```
 
 ## Course Structure
