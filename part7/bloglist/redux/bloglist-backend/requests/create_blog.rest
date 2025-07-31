@@ -1,0 +1,8 @@
+post http://localhost:3001/api/blogs
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImtydXNobmEiLCJpZCI6IjY2ZDQzNTczODRhNTlmODhjNzI1ZTFmNyIsImlhdCI6MTcyNTE4Njk3Nn0.3zNctqnON0-L7bB5msU6sMzSqZ9anceULNPDVESKJTY
+   "title": "Go To Stament idered Harmful",
+    "author": "Edsger W. Dijkstra",
+    "url": "http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html",
+    "likes": 55
+}
