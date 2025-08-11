@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react'
+import { useSelector, useDispatch } from 'react-redux'
 import Blog from './components/Blog'
 import Notification from './components/Notification'
 import BlogForm from './components/BlogForm'
 import Togglable from './components/Togglable'
+import { showNotification } from './reducers/notificationReducer'
 import blogService from './services/blogs'
 import loginService from './services/login'
 import './index.css'
@@ -12,12 +14,9 @@ const App = () => {
   const [user, setUser] = useState(null)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-  const [notification, setNotification] = useState({ message: '', type: '' })
 
-  const showNotification = (message, type = 'success') => {
-    setNotification({ message, type })
-    setTimeout(() => setNotification({ message: '', type: '' }), 5000)
-  }
+  const notification = useSelector(state => state.notification)
+  const dispatch = useDispatch()
 
   const handleLogin = async event => {
     event.preventDefault()
@@ -28,16 +27,16 @@ const App = () => {
       setUsername('')
       setPassword('')
       blogService.setToken(user.token)
-      showNotification('User logged in successfully', 'success')
+      dispatch(showNotification('User logged in successfully', 'success'))
     } catch (exception) {
-      showNotification('Wrong username or password', 'error')
+      dispatch(showNotification('Wrong username or password', 'error'))
     }
   }
 
   const handleLogout = () => {
     window.localStorage.removeItem('loggedUser')
     setUser(null)
-    showNotification('Logged out successfully', 'success')
+    dispatch(showNotification('Logged out successfully', 'success'))
   }
 
   const updateBlog = updatedBlog => {
@@ -58,12 +57,14 @@ const App = () => {
         },
       }
       setBlogs(blogs.concat(blogWithUser))
-      showNotification(
-        `A new blog ${createdBlog.title} by ${createdBlog.author} added`,
-        'success'
+      dispatch(
+        showNotification(
+          `A new blog ${createdBlog.title} by ${createdBlog.author} added`,
+          'success'
+        )
       )
     } catch (exception) {
-      showNotification('Failed to create new blog', 'error')
+      dispatch(showNotification('Failed to create new blog', 'error'))
     }
   }
 
@@ -76,13 +77,15 @@ const App = () => {
       ) {
         await blogService.remove(blogToDelete.id)
         setBlogs(blogs.filter(blog => blog.id !== blogToDelete.id))
-        showNotification(
-          `Blog '${blogToDelete.title}' was successfully deleted`,
-          'success'
+        dispatch(
+          showNotification(
+            `Blog '${blogToDelete.title}' was successfully deleted`,
+            'success'
+          )
         )
       }
     } catch (exception) {
-      showNotification('Failed to delete blog', 'error')
+      dispatch(showNotification('Failed to delete blog', 'error'))
     }
   }
 
