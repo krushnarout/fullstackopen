@@ -1,17 +1,15 @@
 import { create } from 'zustand'
 import loginService from '../services/login'
 import blogService from '../services/blogs'
-
-const STORAGE_KEY = 'loggedUser'
+import persistentUser from '../services/persistentUser'
 
 const useUserStore = create(set => ({
   user: null,
 
-  // restores the session saved in localStorage on a page reload
+  // restores the saved session on a page reload
   initializeUser: () => {
-    const storedUser = window.localStorage.getItem(STORAGE_KEY)
-    if (storedUser) {
-      const user = JSON.parse(storedUser)
+    const user = persistentUser.getUser()
+    if (user) {
       blogService.setToken(user.token)
       set({ user })
     }
@@ -19,14 +17,14 @@ const useUserStore = create(set => ({
 
   login: async credentials => {
     const user = await loginService.login(credentials)
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(user))
+    persistentUser.saveUser(user)
     blogService.setToken(user.token)
     set({ user })
     return user
   },
 
   logout: () => {
-    window.localStorage.removeItem(STORAGE_KEY)
+    persistentUser.removeUser()
     blogService.setToken(null)
     set({ user: null })
   },
