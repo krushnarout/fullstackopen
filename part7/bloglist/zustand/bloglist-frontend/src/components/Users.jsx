@@ -1,17 +1,8 @@
-import { useEffect } from 'react'
+import { Link } from 'react-router-dom'
 import useUsersStore from '../stores/usersStore'
-import useNotificationStore from '../stores/notificationStore'
 
 const Users = () => {
   const users = useUsersStore(state => state.users)
-  const initializeUsers = useUsersStore(state => state.initializeUsers)
-  const showNotification = useNotificationStore(state => state.showNotification)
-
-  useEffect(() => {
-    initializeUsers().catch(() =>
-      showNotification('Failed to fetch users', 'error')
-    )
-  }, [initializeUsers, showNotification])
 
   return (
     <div>
@@ -27,7 +18,11 @@ const Users = () => {
         <tbody>
           {users.map(user => (
             <tr key={user.id} data-testid="user">
-              <td>{user.name}</td>
+              <td>
+                <Link to={`/users/${user.id}`}>
+                  {user.name || user.username}
+                </Link>
+              </td>
               <td>{user.username}</td>
               <td>{user.blogs?.length ?? 0}</td>
             </tr>

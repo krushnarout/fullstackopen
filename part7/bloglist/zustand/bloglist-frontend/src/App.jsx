@@ -3,11 +3,13 @@ import { Routes, Route } from 'react-router-dom'
 import Menu from './components/Menu'
 import BlogList from './components/BlogList'
 import Users from './components/Users'
+import User from './components/User'
 import Notification from './components/Notification'
 import LoginForm from './components/LoginForm'
 import useNotificationStore from './stores/notificationStore'
 import useBlogStore from './stores/blogStore'
 import useUserStore from './stores/userStore'
+import useUsersStore from './stores/usersStore'
 import './index.css'
 
 const App = () => {
@@ -19,6 +21,8 @@ const App = () => {
 
   const user = useUserStore(state => state.user)
   const initializeUser = useUserStore(state => state.initializeUser)
+
+  const initializeUsers = useUsersStore(state => state.initializeUsers)
   const logout = useUserStore(state => state.logout)
 
   const handleLogout = () => {
@@ -64,6 +68,12 @@ const App = () => {
     initializeUser()
   }, [initializeUser])
 
+  useEffect(() => {
+    initializeUsers().catch(() =>
+      showNotification('Failed to fetch users', 'error')
+    )
+  }, [initializeUsers, showNotification])
+
   if (user === null) {
     return (
       <div>
@@ -79,6 +89,7 @@ const App = () => {
       <Menu user={user} onLogout={handleLogout} />
       <Notification />
       <Routes>
+        <Route path="/users/:id" element={<User />} />
         <Route path="/users" element={<Users />} />
         <Route
           path="/"
