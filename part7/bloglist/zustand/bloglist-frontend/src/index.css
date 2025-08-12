@@ -24,3 +24,14 @@
   padding: 10px;
   margin-bottom: 10px;
 }
+
+.users {
+  border-collapse: collapse;
+}
+
+.users th,
+.users td {
+  text-align: left;
+  padding: 8px 40px 8px 0;
+  border-bottom: 1px solid #ddd;
+}
