@@ -4,17 +4,23 @@ import Notification from './components/Notification'
 import BlogForm from './components/BlogForm'
 import Togglable from './components/Togglable'
 import useNotificationStore from './stores/notificationStore'
+import useBlogStore from './stores/blogStore'
 import blogService from './services/blogs'
 import loginService from './services/login'
 import './index.css'
 
 const App = () => {
-  const [blogs, setBlogs] = useState([])
   const [user, setUser] = useState(null)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
 
   const showNotification = useNotificationStore(state => state.showNotification)
+
+  const blogs = useBlogStore(state => state.blogs)
+  const initializeBlogs = useBlogStore(state => state.initializeBlogs)
+  const createBlogToStore = useBlogStore(state => state.createBlog)
+  const updateBlogInStore = useBlogStore(state => state.updateBlog)
+  const removeBlogFromStore = useBlogStore(state => state.removeBlog)
 
   const handleLogin = async event => {
     event.preventDefault()
@@ -37,24 +43,9 @@ const App = () => {
     showNotification('Logged out successfully', 'success')
   }
 
-  const updateBlog = updatedBlog => {
-    setBlogs(
-      blogs.map(blog => (blog.id === updatedBlog.id ? updatedBlog : blog))
-    )
-  }
-
   const createBlog = async blog => {
     try {
-      const createdBlog = await blogService.create(blog)
-      const blogWithUser = {
-        ...createdBlog,
-        user: {
-          username: user.username,
-          name: user.name,
-          id: user.id,
-        },
-      }
-      setBlogs(blogs.concat(blogWithUser))
+      const createdBlog = await createBlogToStore(blog, user)
       showNotification(
         `A new blog ${createdBlog.title} by ${createdBlog.author} added`,
         'success'
@@ -72,7 +63,7 @@ const App = () => {
         )
       ) {
         await blogService.remove(blogToDelete.id)
-        setBlogs(blogs.filter(blog => blog.id !== blogToDelete.id))
+        removeBlogFromStore(blogToDelete.id)
         showNotification(
           `Blog '${blogToDelete.title}' was successfully deleted`,
           'success'
@@ -84,8 +75,8 @@ const App = () => {
   }
 
   useEffect(() => {
-    blogService.getAll().then(blogs => setBlogs(blogs))
-  }, [])
+    initializeBlogs()
+  }, [initializeBlogs])
 
   useEffect(() => {
     const loggedUser = JSON.parse(window.localStorage.getItem('loggedUser'))
@@ -138,13 +129,13 @@ const App = () => {
       <Togglable buttonLabel="Create new blog">
         <BlogForm createBlog={createBlog} />
       </Togglable>
-      {blogs
+      {[...blogs]
         .sort((a, b) => b.likes - a.likes)
         .map(blog => (
           <Blog
             key={blog.id}
             blog={blog}
-            updateBlog={updateBlog}
+            updateBlog={updateBlogInStore}
             deleteBlog={deleteBlog}
             currentUser={user}
           />
