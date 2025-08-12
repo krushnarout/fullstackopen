@@ -5,12 +5,10 @@ import BlogForm from './components/BlogForm'
 import Togglable from './components/Togglable'
 import useNotificationStore from './stores/notificationStore'
 import useBlogStore from './stores/blogStore'
-import blogService from './services/blogs'
-import loginService from './services/login'
+import useUserStore from './stores/userStore'
 import './index.css'
 
 const App = () => {
-  const [user, setUser] = useState(null)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
 
@@ -21,15 +19,17 @@ const App = () => {
   const createBlogToStore = useBlogStore(state => state.createBlog)
   const deleteBlogFromStore = useBlogStore(state => state.deleteBlog)
 
+  const user = useUserStore(state => state.user)
+  const initializeUser = useUserStore(state => state.initializeUser)
+  const login = useUserStore(state => state.login)
+  const logout = useUserStore(state => state.logout)
+
   const handleLogin = async event => {
     event.preventDefault()
     try {
-      const user = await loginService.login({ username, password })
-      setUser(user)
-      window.localStorage.setItem('loggedUser', JSON.stringify(user))
+      await login({ username, password })
       setUsername('')
       setPassword('')
-      blogService.setToken(user.token)
       showNotification('User logged in successfully', 'success')
     } catch (exception) {
       showNotification('Wrong username or password', 'error')
@@ -37,14 +37,13 @@ const App = () => {
   }
 
   const handleLogout = () => {
-    window.localStorage.removeItem('loggedUser')
-    setUser(null)
+    logout()
     showNotification('Logged out successfully', 'success')
   }
 
   const createBlog = async blog => {
     try {
-      const createdBlog = await createBlogToStore(blog, user)
+      const createdBlog = await createBlogToStore(blog)
       showNotification(
         `A new blog ${createdBlog.title} by ${createdBlog.author} added`,
         'success'
@@ -77,12 +76,8 @@ const App = () => {
   }, [initializeBlogs])
 
   useEffect(() => {
-    const loggedUser = JSON.parse(window.localStorage.getItem('loggedUser'))
-    if (loggedUser) {
-      setUser(loggedUser)
-      blogService.setToken(loggedUser.token)
-    }
-  }, [])
+    initializeUser()
+  }, [initializeUser])
 
   if (user === null) {
     return (
@@ -130,12 +125,7 @@ const App = () => {
       {[...blogs]
         .sort((a, b) => b.likes - a.likes)
         .map(blog => (
-          <Blog
-            key={blog.id}
-            blog={blog}
-            deleteBlog={deleteBlog}
-            currentUser={user}
-          />
+          <Blog key={blog.id} blog={blog} deleteBlog={deleteBlog} />
         ))}
     </div>
   )

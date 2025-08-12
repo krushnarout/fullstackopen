@@ -1,10 +1,12 @@
 import { useState } from 'react'
 import useBlogStore from '../stores/blogStore'
 import useNotificationStore from '../stores/notificationStore'
+import useUserStore from '../stores/userStore'
 
-const Blog = ({ blog, deleteBlog, currentUser }) => {
+const Blog = ({ blog, deleteBlog }) => {
   const [showDetails, setShowDetails] = useState(false)
 
+  const currentUser = useUserStore(state => state.user)
   const likeBlog = useBlogStore(state => state.likeBlog)
   const showNotification = useNotificationStore(state => state.showNotification)
 

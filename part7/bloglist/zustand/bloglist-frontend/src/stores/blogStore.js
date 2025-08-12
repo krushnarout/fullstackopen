@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import blogService from '../services/blogs'
+import useUserStore from './userStore'
 
 const useBlogStore = create(set => ({
   blogs: [],
@@ -9,10 +10,11 @@ const useBlogStore = create(set => ({
     set({ blogs })
   },
 
-  createBlog: async (blog, user) => {
+  createBlog: async blog => {
+    const { user } = useUserStore.getState()
     const createdBlog = await blogService.create(blog)
     // the backend returns the new blog with an unpopulated user field,
-    // so the logged in user is attached here for rendering
+    // so the signed in user is attached here for rendering
     const blogWithUser = {
       ...createdBlog,
       user: {
