@@ -1,8 +1,12 @@
 import { useState } from 'react'
-import blogsService from '../services/blogs'
+import useBlogStore from '../stores/blogStore'
+import useNotificationStore from '../stores/notificationStore'
 
-const Blog = ({ blog, updateBlog, deleteBlog, currentUser }) => {
+const Blog = ({ blog, deleteBlog, currentUser }) => {
   const [showDetails, setShowDetails] = useState(false)
+
+  const likeBlog = useBlogStore(state => state.likeBlog)
+  const showNotification = useNotificationStore(state => state.showNotification)
 
   const blogStyle = {
     paddingTop: 10,
@@ -17,13 +21,11 @@ const Blog = ({ blog, updateBlog, deleteBlog, currentUser }) => {
   }
 
   const handleLike = async () => {
-    const updatedBlog = {
-      ...blog,
-      likes: blog.likes + 1,
-      user: blog.user.id,
+    try {
+      await likeBlog(blog)
+    } catch (exception) {
+      showNotification(`Failed to like blog '${blog.title}'`, 'error')
     }
-    const returnedBlog = await blogsService.update(blog.id, updatedBlog)
-    updateBlog(returnedBlog)
   }
 
   return (

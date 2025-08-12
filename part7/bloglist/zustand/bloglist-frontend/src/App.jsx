@@ -19,8 +19,7 @@ const App = () => {
   const blogs = useBlogStore(state => state.blogs)
   const initializeBlogs = useBlogStore(state => state.initializeBlogs)
   const createBlogToStore = useBlogStore(state => state.createBlog)
-  const updateBlogInStore = useBlogStore(state => state.updateBlog)
-  const removeBlogFromStore = useBlogStore(state => state.removeBlog)
+  const deleteBlogFromStore = useBlogStore(state => state.deleteBlog)
 
   const handleLogin = async event => {
     event.preventDefault()
@@ -62,8 +61,7 @@ const App = () => {
           `Remove blog ${blogToDelete.title} by ${blogToDelete.author}?`
         )
       ) {
-        await blogService.remove(blogToDelete.id)
-        removeBlogFromStore(blogToDelete.id)
+        await deleteBlogFromStore(blogToDelete)
         showNotification(
           `Blog '${blogToDelete.title}' was successfully deleted`,
           'success'
@@ -135,7 +133,6 @@ const App = () => {
           <Blog
             key={blog.id}
             blog={blog}
-            updateBlog={updateBlogInStore}
             deleteBlog={deleteBlog}
             currentUser={user}
           />

@@ -4,6 +4,14 @@ import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import Blog from './Blog'
 
+const { likeHandler } = vi.hoisted(() => ({ likeHandler: vi.fn() }))
+
+// Blog reads the like action straight from the blog store, so the store
+// module is mocked instead of passing a handler in as a prop
+vi.mock('../stores/blogStore', () => ({
+  default: selector => selector({ likeBlog: likeHandler }),
+}))
+
 describe('<Blog />', () => {
   let container
   const blog = {
@@ -17,10 +25,9 @@ describe('<Blog />', () => {
     },
   }
 
-  const likeHandler = vi.fn()
-
   beforeEach(() => {
-    container = render(<Blog blog={blog} updateBlog={likeHandler} />).container
+    likeHandler.mockClear()
+    container = render(<Blog blog={blog} />).container
   })
 
   test('renders title and author, but not URL or likes by default', () => {
@@ -28,7 +35,7 @@ describe('<Blog />', () => {
     expect(titleElement).toBeDefined()
     const urlElement = screen.queryByText('https://github.com/krushnarout')
     expect(urlElement).toBeNull()
-    const likesElement = screen.queryByText('likes: 50')
+    const likesElement = screen.queryByTestId('likes')
     expect(likesElement).toBeNull()
   })
 
@@ -38,8 +45,8 @@ describe('<Blog />', () => {
     await user.click(button)
     const urlElement = screen.getByText('https://github.com/krushnarout')
     expect(urlElement).toBeDefined()
-    const likesElement = screen.getByText('likes: 50')
-    expect(likesElement).toBeDefined()
+    const likesElement = screen.getByTestId('likes')
+    expect(likesElement).toHaveTextContent('50')
   })
 
   test('like button event handler called twice when clicked twice', async () => {
