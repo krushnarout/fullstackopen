@@ -21,6 +21,8 @@ const blogSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
   },
+  // comments are anonymous, so they are stored as plain strings
+  comments: [String],
 })
 
 blogSchema.set('toJSON', {

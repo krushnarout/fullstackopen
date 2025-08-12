@@ -4,6 +4,7 @@ import Menu from './components/Menu'
 import BlogList from './components/BlogList'
 import Users from './components/Users'
 import User from './components/User'
+import BlogView from './components/BlogView'
 import Notification from './components/Notification'
 import LoginForm from './components/LoginForm'
 import useNotificationStore from './stores/notificationStore'
@@ -89,6 +90,10 @@ const App = () => {
       <Menu user={user} onLogout={handleLogout} />
       <Notification />
       <Routes>
+        <Route
+          path="/blogs/:id"
+          element={<BlogView deleteBlog={deleteBlog} />}
+        />
         <Route path="/users/:id" element={<User />} />
         <Route path="/users" element={<Users />} />
         <Route

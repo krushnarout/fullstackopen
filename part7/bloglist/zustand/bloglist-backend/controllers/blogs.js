@@ -8,7 +8,9 @@ blogsRouter.get('/', async (request, response) => {
 })
 
 blogsRouter.get("/:id", async (request, response) => {
-  const blog = await Blog.findById(request.params.id)
+  const blog = await Blog
+    .findById(request.params.id)
+    .populate('user', { username: 1, name: 1, id: 1 })
   if (blog) {
     response.json(blog)
   } else {
@@ -62,6 +64,28 @@ blogsRouter.delete('/:id', async (request, response, next) => {
       .status(401)
       .json({ error: "Unauthorized access to the blog" })
   }
+})
+
+blogsRouter.post('/:id/comments', async (request, response) => {
+  const { comment } = request.body
+
+  if (!comment || !comment.trim()) {
+    return response.status(400).json({ error: 'comment is missing' })
+  }
+
+  const blog = await Blog.findById(request.params.id)
+
+  if (!blog) {
+    return response
+      .status(404)
+      .json({ error: `Blog by ID ${request.params.id} does not exist` })
+  }
+
+  blog.comments = blog.comments.concat(comment.trim())
+  const updatedBlog = await blog.save()
+  await updatedBlog.populate('user', { username: 1, name: 1, id: 1 })
+
+  response.status(201).json(updatedBlog)
 })
 
 blogsRouter.put('/:id', async (request, response) => {

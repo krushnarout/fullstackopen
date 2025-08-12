@@ -2,6 +2,7 @@ import React from 'react'
 import '@testing-library/jest-dom'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { MemoryRouter } from 'react-router-dom'
 import Blog from './Blog'
 
 const { likeHandler } = vi.hoisted(() => ({ likeHandler: vi.fn() }))
@@ -27,7 +28,11 @@ describe('<Blog />', () => {
 
   beforeEach(() => {
     likeHandler.mockClear()
-    container = render(<Blog blog={blog} />).container
+    container = render(
+      <MemoryRouter>
+        <Blog blog={blog} />
+      </MemoryRouter>
+    ).container
   })
 
   test('renders title and author, but not URL or likes by default', () => {

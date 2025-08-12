@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import useBlogStore from '../stores/blogStore'
 import useNotificationStore from '../stores/notificationStore'
 import useUserStore from '../stores/userStore'
@@ -33,7 +34,9 @@ const Blog = ({ blog, deleteBlog }) => {
   return (
     <div style={blogStyle} className="blog" data-testid="blog">
       <div>
-        {blog.title} {blog.author}
+        <Link to={`/blogs/${blog.id}`}>
+          {blog.title} {blog.author}
+        </Link>
         <button onClick={toggleDetails}>{showDetails ? 'Hide' : 'View'}</button>
       </div>
       {showDetails && (

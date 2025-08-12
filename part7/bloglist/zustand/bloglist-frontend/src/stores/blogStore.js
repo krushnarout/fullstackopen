@@ -4,10 +4,12 @@ import useUserStore from './userStore'
 
 const useBlogStore = create(set => ({
   blogs: [],
+  // lets a view tell "not fetched yet" apart from "fetched, but no match"
+  initialized: false,
 
   initializeBlogs: async () => {
     const blogs = await blogService.getAll()
-    set({ blogs })
+    set({ blogs, initialized: true })
   },
 
   createBlog: async blog => {

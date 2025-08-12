@@ -1,0 +1,67 @@
+import { useParams } from 'react-router-dom'
+import useBlogStore from '../stores/blogStore'
+import useUserStore from '../stores/userStore'
+import useNotificationStore from '../stores/notificationStore'
+
+const BlogView = ({ deleteBlog }) => {
+  const { id } = useParams()
+
+  const blogs = useBlogStore(state => state.blogs)
+  const initialized = useBlogStore(state => state.initialized)
+  const likeBlog = useBlogStore(state => state.likeBlog)
+  const currentUser = useUserStore(state => state.user)
+  const showNotification = useNotificationStore(state => state.showNotification)
+
+  const blog = blogs.find(blog => blog.id === id)
+
+  if (!blog) {
+    return <div>{initialized ? 'Blog not found' : null}</div>
+  }
+
+  const handleLike = async () => {
+    try {
+      await likeBlog(blog)
+    } catch (exception) {
+      showNotification(`Failed to like blog '${blog.title}'`, 'error')
+    }
+  }
+
+  const comments = blog.comments ?? []
+
+  return (
+    <div>
+      <h2>{blog.title}</h2>
+      <p>by {blog.author}</p>
+      <p>
+        <a href={blog.url}>{blog.url}</a>
+      </p>
+      {blog.user && <p>Added by {blog.user.name || blog.user.username}</p>}
+      <p>
+        <span data-testid="likes">{blog.likes}</span> likes
+        <button data-testid="like-button" onClick={handleLike}>
+          like
+        </button>
+      </p>
+      {blog.user?.username === currentUser?.username && (
+        <button data-testid="remove-button" onClick={() => deleteBlog(blog)}>
+          Remove
+        </button>
+      )}
+
+      <h3>comments</h3>
+      {comments.length === 0 ? (
+        <p>no comments yet</p>
+      ) : (
+        <ul>
+          {comments.map((comment, index) => (
+            <li key={index} data-testid="comment">
+              {comment}
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  )
+}
+
+export default BlogView
