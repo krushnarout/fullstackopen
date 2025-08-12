@@ -2,6 +2,7 @@ import { useParams } from 'react-router-dom'
 import useBlogStore from '../stores/blogStore'
 import useUserStore from '../stores/userStore'
 import useNotificationStore from '../stores/notificationStore'
+import CommentForm from './CommentForm'
 
 const BlogView = ({ deleteBlog }) => {
   const { id } = useParams()
@@ -9,6 +10,7 @@ const BlogView = ({ deleteBlog }) => {
   const blogs = useBlogStore(state => state.blogs)
   const initialized = useBlogStore(state => state.initialized)
   const likeBlog = useBlogStore(state => state.likeBlog)
+  const addCommentToStore = useBlogStore(state => state.addComment)
   const currentUser = useUserStore(state => state.user)
   const showNotification = useNotificationStore(state => state.showNotification)
 
@@ -23,6 +25,18 @@ const BlogView = ({ deleteBlog }) => {
       await likeBlog(blog)
     } catch (exception) {
       showNotification(`Failed to like blog '${blog.title}'`, 'error')
+    }
+  }
+
+  // returns whether the comment went through, so the form knows to clear
+  const addComment = async comment => {
+    try {
+      await addCommentToStore(blog.id, comment)
+      showNotification('Comment added', 'success')
+      return true
+    } catch (exception) {
+      showNotification('Failed to add comment', 'error')
+      return false
     }
   }
 
@@ -49,6 +63,7 @@ const BlogView = ({ deleteBlog }) => {
       )}
 
       <h3>comments</h3>
+      <CommentForm addComment={addComment} />
       {comments.length === 0 ? (
         <p>no comments yet</p>
       ) : (
