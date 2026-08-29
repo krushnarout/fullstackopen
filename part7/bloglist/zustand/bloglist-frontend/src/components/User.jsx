@@ -1,3 +1,4 @@
+import { Typography } from '@mui/material'
 import { useParams } from 'react-router-dom'
 import useUsersStore from '../stores/usersStore'
 
@@ -16,8 +17,10 @@ const User = () => {
 
   return (
     <div>
-      <h2>{user.name || user.username}</h2>
-      <h3>added blogs</h3>
+      <Typography variant="h4" gutterBottom>
+        {user.name || user.username}
+      </Typography>
+      <Typography variant="h6">added blogs</Typography>
       {blogs.length === 0 ? (
         <p>no blogs added</p>
       ) : (

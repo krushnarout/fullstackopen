@@ -1,3 +1,4 @@
+import { Alert } from '@mui/material'
 import useNotificationStore from '../stores/notificationStore'
 
 const Notification = () => {
@@ -8,7 +9,15 @@ const Notification = () => {
     return null
   }
 
-  return <div className={`notification ${type}`}>{message}</div>
+  return (
+    <Alert
+      severity={type === 'error' ? 'error' : 'success'}
+      className={`notification ${type}`}
+      sx={{ mb: 2 }}
+    >
+      {message}
+    </Alert>
+  )
 }
 
 export default Notification

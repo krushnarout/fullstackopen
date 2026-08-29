@@ -1,3 +1,4 @@
+import { Typography } from '@mui/material'
 import Blog from './Blog'
 import BlogForm from './BlogForm'
 import Togglable from './Togglable'
@@ -8,7 +9,9 @@ const BlogList = ({ createBlog, deleteBlog }) => {
 
   return (
     <div>
-      <h2>blogs</h2>
+      <Typography variant="h4" gutterBottom>
+        blogs
+      </Typography>
       <Togglable buttonLabel="Create new blog">
         <BlogForm createBlog={createBlog} />
       </Togglable>

@@ -1,4 +1,5 @@
 import { useEffect } from 'react'
+import { Container } from '@mui/material'
 import { Routes, Route } from 'react-router-dom'
 import Menu from './components/Menu'
 import BlogList from './components/BlogList'
@@ -77,30 +78,34 @@ const App = () => {
 
   if (user === null) {
     return (
-      <div>
+      <Container sx={{ pt: 3 }}>
         <h2>Log in to application</h2>
         <Notification />
         <LoginForm />
-      </div>
+      </Container>
     )
   }
 
   return (
     <div>
       <Menu user={user} onLogout={handleLogout} />
-      <Notification />
-      <Routes>
-        <Route
-          path="/blogs/:id"
-          element={<BlogView deleteBlog={deleteBlog} />}
-        />
-        <Route path="/users/:id" element={<User />} />
-        <Route path="/users" element={<Users />} />
-        <Route
-          path="/"
-          element={<BlogList createBlog={createBlog} deleteBlog={deleteBlog} />}
-        />
-      </Routes>
+      <Container sx={{ pb: 4 }}>
+        <Notification />
+        <Routes>
+          <Route
+            path="/blogs/:id"
+            element={<BlogView deleteBlog={deleteBlog} />}
+          />
+          <Route path="/users/:id" element={<User />} />
+          <Route path="/users" element={<Users />} />
+          <Route
+            path="/"
+            element={
+              <BlogList createBlog={createBlog} deleteBlog={deleteBlog} />
+            }
+          />
+        </Routes>
+      </Container>
     </div>
   )
 }

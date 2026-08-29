@@ -1,3 +1,4 @@
+import { Box, Button, TextField } from '@mui/material'
 import useUserStore from '../stores/userStore'
 import useNotificationStore from '../stores/notificationStore'
 import { useField } from '../hooks'
@@ -25,25 +26,27 @@ const LoginForm = () => {
   }
 
   return (
-    <form onSubmit={handleLogin}>
-      <div>
-        username{' '}
-        <input
-          {...username.inputProps}
-          data-testid="username"
-          name="Username"
-        />
-      </div>
-      <div>
-        password{' '}
-        <input
-          {...password.inputProps}
-          data-testid="password"
-          name="Password"
-        />
-      </div>
-      <button type="submit">log in</button>
-    </form>
+    <Box component="form" onSubmit={handleLogin} sx={{ maxWidth: 320 }}>
+      <TextField
+        {...username.inputProps}
+        label="username"
+        name="Username"
+        margin="dense"
+        fullWidth
+        slotProps={{ htmlInput: { 'data-testid': 'username' } }}
+      />
+      <TextField
+        {...password.inputProps}
+        label="password"
+        name="Password"
+        margin="dense"
+        fullWidth
+        slotProps={{ htmlInput: { 'data-testid': 'password' } }}
+      />
+      <Button type="submit" variant="contained" sx={{ mt: 1 }}>
+        log in
+      </Button>
+    </Box>
   )
 }
 

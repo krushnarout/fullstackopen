@@ -1,3 +1,4 @@
+import { Box, Button, TextField } from '@mui/material'
 import { useField } from '../hooks'
 
 const BlogForm = ({ createBlog }) => {
@@ -18,38 +19,41 @@ const BlogForm = ({ createBlog }) => {
   }
 
   return (
-    <div>
+    <Box component="form" onSubmit={addBlog} sx={{ maxWidth: 400, mb: 2 }}>
       <h2>Create new blog</h2>
-      <form onSubmit={addBlog}>
-        <div>
-          title
-          <input
-            {...title.inputProps}
-            data-testid="title"
-            placeholder="enter title here"
-          />
-        </div>
-        <div>
-          author
-          <input
-            {...author.inputProps}
-            data-testid="author"
-            placeholder="enter author here"
-          />
-        </div>
-        <div>
-          url
-          <input
-            {...url.inputProps}
-            data-testid="url"
-            placeholder="enter url here"
-          />
-        </div>
-        <button type="submit" data-testid="create">
-          create
-        </button>
-      </form>
-    </div>
+      <TextField
+        {...title.inputProps}
+        label="title"
+        placeholder="enter title here"
+        margin="dense"
+        fullWidth
+        slotProps={{ htmlInput: { 'data-testid': 'title' } }}
+      />
+      <TextField
+        {...author.inputProps}
+        label="author"
+        placeholder="enter author here"
+        margin="dense"
+        fullWidth
+        slotProps={{ htmlInput: { 'data-testid': 'author' } }}
+      />
+      <TextField
+        {...url.inputProps}
+        label="url"
+        placeholder="enter url here"
+        margin="dense"
+        fullWidth
+        slotProps={{ htmlInput: { 'data-testid': 'url' } }}
+      />
+      <Button
+        type="submit"
+        variant="contained"
+        sx={{ mt: 1 }}
+        data-testid="create"
+      >
+        create
+      </Button>
+    </Box>
   )
 }
 

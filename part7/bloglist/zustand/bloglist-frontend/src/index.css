@@ -1,37 +1,9 @@
-.notification {
-  padding: 10px;
-  margin: 10px 0;
-  border: 1px solid;
-  border-radius: 5px;
-}
-
+/* MUI's Alert provides the notification layout; this only keeps the
+   success/error colours the end-to-end tests assert on */
 .notification.success {
-  color: green;
-  background: lightgrey;
-  font-size: 20px;
-  border-style: solid;
-  border-radius: 5px;
-  padding: 10px;
-  margin-bottom: 10px;
+  color: rgb(0, 128, 0);
 }
 
 .notification.error {
-  color: red;
-  background: lightgrey;
-  font-size: 20px;
-  border-style: solid;
-  border-radius: 5px;
-  padding: 10px;
-  margin-bottom: 10px;
-}
-
-.users {
-  border-collapse: collapse;
-}
-
-.users th,
-.users td {
-  text-align: left;
-  padding: 8px 40px 8px 0;
-  border-bottom: 1px solid #ddd;
+  color: rgb(255, 0, 0);
 }

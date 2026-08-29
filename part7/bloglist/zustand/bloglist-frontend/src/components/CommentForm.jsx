@@ -1,3 +1,4 @@
+import { Box, Button, TextField } from '@mui/material'
 import { useField } from '../hooks'
 
 const CommentForm = ({ addComment }) => {
@@ -18,16 +19,21 @@ const CommentForm = ({ addComment }) => {
   }
 
   return (
-    <form onSubmit={handleSubmit}>
-      <input
+    <Box
+      component="form"
+      onSubmit={handleSubmit}
+      sx={{ display: 'flex', gap: 1, alignItems: 'center', my: 1 }}
+    >
+      <TextField
         {...comment.inputProps}
-        data-testid="comment-input"
+        size="small"
         placeholder="add a comment"
+        slotProps={{ htmlInput: { 'data-testid': 'comment-input' } }}
       />
-      <button type="submit" data-testid="add-comment">
+      <Button type="submit" variant="contained" data-testid="add-comment">
         add comment
-      </button>
-    </form>
+      </Button>
+    </Box>
   )
 }
 

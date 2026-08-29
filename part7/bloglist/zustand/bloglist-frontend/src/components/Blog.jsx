@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Button, Paper } from '@mui/material'
 import { Link } from 'react-router-dom'
 import useBlogStore from '../stores/blogStore'
 import useNotificationStore from '../stores/notificationStore'
@@ -10,14 +11,6 @@ const Blog = ({ blog, deleteBlog }) => {
   const currentUser = useUserStore(state => state.user)
   const likeBlog = useBlogStore(state => state.likeBlog)
   const showNotification = useNotificationStore(state => state.showNotification)
-
-  const blogStyle = {
-    paddingTop: 10,
-    paddingLeft: 2,
-    border: 'solid',
-    borderWidth: 1,
-    marginBottom: 5,
-  }
 
   const toggleDetails = () => {
     setShowDetails(!showDetails)
@@ -32,34 +25,38 @@ const Blog = ({ blog, deleteBlog }) => {
   }
 
   return (
-    <div style={blogStyle} className="blog" data-testid="blog">
+    <Paper sx={{ p: 1.5, mb: 1 }} className="blog" data-testid="blog">
       <div>
         <Link to={`/blogs/${blog.id}`}>
           {blog.title} {blog.author}
         </Link>
-        <button onClick={toggleDetails}>{showDetails ? 'Hide' : 'View'}</button>
+        <Button size="small" onClick={toggleDetails}>
+          {showDetails ? 'Hide' : 'View'}
+        </Button>
       </div>
       {showDetails && (
         <div>
           <p>{blog.url}</p>
           <p>
             likes: <span data-testid="likes">{blog.likes}</span>
-            <button data-testid="like-button" onClick={handleLike}>
+            <Button size="small" data-testid="like-button" onClick={handleLike}>
               like
-            </button>
+            </Button>
           </p>
           {blog.user && <p>{blog.user.username}</p>}
           {blog.user?.username === currentUser?.username && (
-            <button
+            <Button
+              size="small"
+              color="error"
               data-testid="remove-button"
               onClick={() => deleteBlog(blog)}
             >
               Remove
-            </button>
+            </Button>
           )}
         </div>
       )}
-    </div>
+    </Paper>
   )
 }
 
